@@ -31,6 +31,10 @@ LONG setICloudNotificationSettingOnBuffer(BYTE* const regValue, const DWORD regS
         assert(*(pSw - 1) == 0xa4);
         assert(*(pSw - 2) == 0x0c);
 
+        if (currentSetting == ICLOUD_NOTIFICATION_OFF) {
+            return ERROR_ALREADY_ASSIGNED;
+        }
+
         *pSw = val;
 
         return ERROR_SUCCESS;
@@ -59,7 +63,7 @@ LONG setICloudNotification(const BOOL enableNotification)
 
     /* Modify the iCloud notification setting */
     result = setICloudNotificationSettingOnBuffer(appDbBuffer, cbData, val);
-    if (result != ERROR_SUCCESS) {
+    if (result == ERROR_NOT_FOUND) {
         printf("keyword not found.\n");
         goto last;
     }
@@ -93,9 +97,12 @@ int main(void)
 
     if (result == ERROR_SUCCESS) {
         printf("success (restarting explorer is required)\n");
+    } else if (result == ERROR_ALREADY_ASSIGNED) {
+        printf("success (already set)\n");
+        return 1;
     } else {
         printf("failed\n");
-        return -1;
+        return 16;
     }
 
     return 0;
