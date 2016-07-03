@@ -1,3 +1,4 @@
+cd %~dp0\..
 DisableICloudNotificationBanner.exe
 if %ERRORLEVEL% equ 0 goto okay
 if %ERRORLEVEL% neq 0 goto fail
